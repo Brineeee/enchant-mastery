@@ -1,0 +1,107 @@
+
+local A_1 = "b"
+local A_2 = "buy egg"
+local Event = game:GetService("Workspace")["__THINGS"]["__REMOTES"].MAIN
+Event:FireServer(A_1, A_2)
+
+_G.pettable = {}
+local mod = getsenv(game:GetService("Players").LocalPlayer.PlayerScripts.Scripts.Game["Open Eggs"])
+local f
+f = hookfunction(mod.OpenEgg, function(a1, a2)
+for i, v in pairs(a2) do
+table.insert(_G.pettable, tostring(v["uid"]))
+end
+return
+end)
+for i = 1, 50, 1 do
+local A_1 = 
+{
+	[1] = "Cracked Egg", 
+	[2] = false
+}
+local Event = game:GetService("Workspace")["__THINGS"]["__REMOTES"]["buy egg"]
+Event:InvokeServer(A_1)
+wait(1)
+end
+
+
+    local Library, Blacklist, BUID, BankInfo, Functions
+    do--//Init
+	repeat
+		wait(1)
+	until game:IsLoaded() and game:GetService('Players').LocalPlayer ~= nil and game:GetService('Players').LocalPlayer:FindFirstChild('__LOADED')
+	Library     = require(game:GetService('ReplicatedStorage').Framework:FindFirstChild('Library'))
+	Functions   = Library.Functions
+	Blacklist   = {}
+    end
+
+do --//Checks&Functions
+	table.foreach(Library.Directory.Pets, function(i, v)
+		if v.rarity == "Mythical" or v.rarity == "Exclusive" then
+			Blacklist[tostring(i)] = v.rarity
+		end
+	end)
+	function GetPetInfo(uid)
+		for i, v in pairs(Library.Save.Get().Pets) do
+			if v.uid == uid then
+				return v
+			end
+		end
+	end
+	function PetToValidTable(petpowers)
+		local temptable = {}
+		if petpowers then
+			table.foreach(petpowers, function(i, powers)
+				temptable[powers[1]] = powers[2]
+			end)
+		end
+		return temptable
+	end
+	function Time(Tick)
+		if typeof(Tick) ~= "number" then
+			return warn('Integer expected, got', typeof(Tick))
+		end
+		local Tick = tick() - Tick
+		local Weeks = math.floor(math.floor(math.floor(math.floor(Tick / 60) / 60) / 24) / 7)
+		local Days =  math.floor(math.floor(math.floor(Tick / 60) / 60) / 24)
+		local Hours = math.floor(math.floor(Tick / 60) / 60)
+		local Minutes = math.floor(Tick / 60)
+		local Seconds = math.floor(Tick)
+		local MilliSeconds = (Tick * 1000)
+		local Format = ""
+		if Weeks > 0 then 
+			Format = Format .. string.format("%d Week/s, ", Weeks)
+		end
+		if Days > 0 then 
+			Format = Format .. string.format("%d Day/s, ", Days % 7)
+		end
+		if Hours > 0 then
+			Format = Format .. string.format("%d Hour/s, ", Hours % 24)
+		end
+		if Minutes > 0 then
+			Format = Format .. string.format("%d Minute/s, ", Minutes % 60)
+		end
+		if Seconds > 0 then
+			Format = Format .. string.format("%d Second/s, ", Seconds % 60)
+		end
+		if MilliSeconds > 0 then
+			Format = Format .. string.format("%d Ms", MilliSeconds % 1000)
+		end
+		return Format
+	end	
+end
+
+do--//AutoEnch
+	for i, v in pairs(_G.pettable) do
+		if true then
+			local HasPower = false
+			local startTime = tick()
+			spawn(function()
+				repeat
+                        Library.Network.Invoke("Enchant Pet", v)
+					task.wait()
+				until game:GetService("Players").LocalPlayer.PlayerGui.Mastery.Frame.Skills.Holder.Enchanting.Level.Text == "99"
+			end)
+		end
+	end
+end
